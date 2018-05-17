@@ -13,6 +13,7 @@ from collections import deque
 
 
 class Line:
+
     def __init__(self, num_people):
         self.num_people = num_people
 
@@ -31,22 +32,26 @@ class Line:
 
 class _Bench:
     size = 1
+
     def __init__(self, id):
         self.count = 0
         self.id = id
+
     def load(self, num):
         self.count += num
+
     def unload(self):
         val = self.count
         self.count = 0
         return val
 
-    
+
 class Quad(_Bench):
     size = 4
 
 
 class Lift:
+
     def __init__(self, num_benches, bench_class):
         half = num_benches / 2
         self._up = deque()
@@ -62,30 +67,32 @@ class Lift:
         return any(bench.count for bench in self._up)
 
     def simulate(self, line):
-        results = {'loaded': 0, 'unloaded':0, 'num_benches':0}
+        results = {"loaded": 0, "unloaded": 0, "num_benches": 0}
         while line:
             self.one_bench(line, results)
-        #get them to the top
+        # get them to the top
         while self.people_riding_up():
             self.one_bench(line, results)
         return results
 
     def one_bench(self, line, results=None):
-        results = results or {'loaded': 0, 'unloaded':0, 'num_benches':0}
+        results = results or {"loaded": 0, "unloaded": 0, "num_benches": 0}
         num = line.take(self.bench_size)
         # load bottom
         bench = self._down.popleft()
         bench.load(num)
         self._up.append(bench)
-        results['loaded'] += num
+        results["loaded"] += num
         # unload top
         bench = self._up.popleft()
         num = bench.unload()
-        results['unloaded'] += num
+        results["unloaded"] += num
         self._down.append(bench)
-        results['num_benches'] += 1
+        results["num_benches"] += 1
         return results
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     import doctest
+
     doctest.testmod()
